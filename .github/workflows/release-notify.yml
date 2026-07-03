@@ -1,0 +1,28 @@
+name: Release Notify Telegram
+on:
+  release:
+    types: [published] # 仅正式发布Release触发
+
+jobs:
+  send_tg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Release Message
+        uses: cbrgm/telegram-github-action@v1
+        with:
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          parse_mode: HTML
+          message: |
+            <b>版本发布通知</b>
+
+            <b>${{ github.event.release.name || github.event.release.tag_name }}</b>
+            <code>${{ github.event.release.tag_name }}</code>
+
+            <b>项目仓库：</b><code>${{ github.repository }}</code>
+            <b>发布人员：</b>${{ github.actor }}
+            <b>发布时间：</b>${{ github.event.release.published_at }}
+
+            <b>查看详情：</b>
+            <a href="${{ github.event.release.html_url }}">Release 页面</a>
+            <a href="https://github.com/${{ github.repository }}">项目主页</a>
